@@ -152,7 +152,8 @@ Prefab:
       propertyPath: m_RootOrder
       value: 9
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 61303769689950400, guid: ed88db97eb27ff64ca966ea45c1289a9, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: ed88db97eb27ff64ca966ea45c1289a9, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &519420028
@@ -820,7 +821,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   request: {fileID: 1887386434}
-  network_id: 8d610478e7b4452f9d0c61190b752dc7
+  network_id: d0ac70a3f6854d59bf6366b9752c45f0
   tolerance: 0.5
 --- !u!4 &1121344452
 Transform:
@@ -954,7 +955,7 @@ MonoBehaviour:
   _layer: {fileID: 1626504134697680, guid: cdfa96fdc1f761a4ab2a12ac61753cab, type: 2}
   _portal: {fileID: 1011112021103920, guid: 5de8b10d5afeba445a02e98a60556652, type: 2}
   _sprite: {fileID: 1730377768897898, guid: cef46c015a7702f409585899d06b0005, type: 2}
-  camera: {fileID: 519420028}
+  cam: {fileID: 519420028}
   title: {fileID: 987506353}
   transition: {fileID: 1209418127}
   world_id: 1303cb61dd594f5dad4fe53bac53eca5
@@ -999,8 +1000,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 519420031}
-  effect: {fileID: 1610928043522492, guid: 8c7bde25fee7e1247bdab2b791d43716, type: 2}
+  effect: {fileID: 1046004392185242, guid: ff96b0b57b0fbc8419276466a8d07c8c, type: 2}
   magicIdentifier: {fileID: 1121344451}
+  magics:
+  - {fileID: 1972558877029348, guid: cdd5a0d31bb97db4e8ed073534579493, type: 2}
+  - {fileID: 1951368253850974, guid: 245f0bb9350160d4989217f5a2d35464, type: 2}
+  - {fileID: 1638305818553968, guid: 18a89aa24a8d755499a81b3868bc54ed, type: 2}
+  - {fileID: 1443962835142392, guid: debc734358fea0546b940a6bf4c20493, type: 2}
 --- !u!4 &1308355205
 Transform:
   m_ObjectHideFlags: 0
@@ -1095,6 +1101,21 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1594328227595286, guid: ed88db97eb27ff64ca966ea45c1289a9,
     type: 2}
   m_PrefabInternal: {fileID: 338279836}
+--- !u!70 &1452204877
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1452204876}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.25, y: -0.5}
+  m_Size: {x: 5, y: 10}
+  m_Direction: 0
 --- !u!4 &1866000678 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4614018797124686, guid: 230f5c5ed3bbf3a49bacb669f2f62d51,

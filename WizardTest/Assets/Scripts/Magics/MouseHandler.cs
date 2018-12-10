@@ -7,17 +7,25 @@ using MachineLearning;
 public class MouseHandler : MonoBehaviour
 {
 
-    public Camera cam;
-    public GameObject effect;
-    public MagicIdentifier magicIdentifier;
+    [SerializeField]
+    private Camera cam;
+    [SerializeField]
+    private GameObject effect;
+    [SerializeField]
+    private MagicIdentifier magicIdentifier;
+    [SerializeField]
+    private GameObject[] magics;
     private List<Vector3> pos;
+    private Vector3 rawStart;
     private bool record;
+    private MagicAction magic;
 
     void Start()
     {
         Cursor.visible = false;
         record = false;
         pos = new List<Vector3>();
+        magic = null;
     }
 
     void Update()
@@ -26,13 +34,22 @@ public class MouseHandler : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             record = true;
+            rawStart = Input.mousePosition;
             pos = new List<Vector3>();
             pos.Add(cur);
         }
         if (Input.GetMouseButtonUp(1))
         {
             record = false;
-            IdentifyMagic();
+            if (magic != null && magic.RequiresMouseTrail())
+            {
+                magic.SetMouseTrail(pos, rawStart);
+                magic = null;
+            }
+            else
+            {
+                IdentifyMagic();
+            }
         }
 
         if (record)
@@ -67,6 +84,10 @@ public class MouseHandler : MonoBehaviour
             input.Add(vec.x);
             input.Add(vec.y);
         }
-        Debug.Log(magicIdentifier.IdentifyMagic(input.ToArray()));
+        //instantiate drawn magic:
+        //expects magic to destroy self when done
+        int index = magicIdentifier.IdentifyMagic(input.ToArray());
+        if (index != -1)
+            magic = Instantiate(magics[index]).GetComponent<MagicAction>();
     }
 }

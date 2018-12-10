@@ -22,6 +22,7 @@ public class Movement : MonoBehaviour
     private GameObject layer;
     private Animator animator;
     private Vector3 target;
+    private Rigidbody2D rb;
 
     void Start()
     {
@@ -30,6 +31,7 @@ public class Movement : MonoBehaviour
         jmp = false;
         fall = false;
         animator = player.GetComponent<Animator>();
+        rb = player.GetComponent<Rigidbody2D>();
     }
 
     public void SetPlayerPosition()
@@ -101,21 +103,25 @@ public class Movement : MonoBehaviour
             animator.SetBool("IsRun", false);
         }
 
+        //Fall
+        if (player.transform.position.y > target.y)
+            inAir = true;
+
         //Jump
         if (inAir && player.transform.position.y < target.y)
         {
             animator.SetBool("IsJump", false);
             inAir = false;
-            jmpVelocity = 0.0f;
+            rb.velocity = Vector2.zero;
         }
         if (jmp && !inAir)
         {
-            jmpVelocity = jmpForce;
+            rb.velocity += (Vector2.up * jmpForce);
             animator.SetBool("IsFall", false);
             animator.SetBool("IsJump", true);
             inAir = true;
         }
-        if (inAir && jmpVelocity < 0.0f)
+        if (inAir && rb.velocity.y < 0.0f)
         {
             fall = true;
             animator.SetBool("IsJump", false);
@@ -142,10 +148,15 @@ public class Movement : MonoBehaviour
         }
         if (inAir)
         {
-            Vector3 playerPos = player.transform.position;
-            playerPos.y += jmpVelocity * Time.deltaTime - 10 / 2.0f * Time.deltaTime * Time.deltaTime;
-            player.transform.position = playerPos;
-            jmpVelocity -= 10 * Time.deltaTime;
+            if (Mathf.Abs(rb.velocity.x) > 0.0f)
+            {
+                step = 10.0f * rb.velocity.x * Time.deltaTime * 100.0f / Mathf.Pow(worldSize, 1.5f);
+                player.transform.position = new Vector3(0.0f, player.transform.position.y, player.transform.position.z);
+                pos += step;
+                pos = Mathf.Clamp(pos, 0.0f, 100.0f);
+                UpdateLayers();
+                UpdatePlayerPosition();
+            }
         }
         else
         {
