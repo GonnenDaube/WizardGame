@@ -1,0 +1,35 @@
+{
+    "taskInfos": [
+        {
+            "description": "Talk to the shop keeper",
+            "scriptables": {
+                "e01aedeb3e7442488e6aabfa4b254e92": [
+                    {
+                        "prefabName": "ShopKeeperConversation",
+                        "position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": 0.0,
+                        "scale": 1.0,
+                        "layerIndex": 4
+                    },
+                    {
+                        "prefabName": "ShopKeeperDialogueStarter",
+                        "position": [
+                            20.83,
+                            -3.0,
+                            0.0
+                        ],
+                        "rotation": 0.0,
+                        "scale": 1.0,
+                        "layerIndex": 4
+                    }
+                ]
+            }
+        }
+    ],
+    "RewardInfo": {},
+    "description": "Quest Description"
+}

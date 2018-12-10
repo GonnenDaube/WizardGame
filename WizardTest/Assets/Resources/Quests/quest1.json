@@ -1,0 +1,112 @@
+{
+    "taskInfos": [
+        {
+            "description": "Task 1 Description",
+            "scriptables": {
+                "1303cb61dd594f5dad4fe53bac53eca5": [
+                    {
+                        "prefabName": "TaskCompletion",
+                        "position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": 15.0,
+                        "scale": 1.0,
+                        "layerIndex": 4
+                    },
+                    {
+                        "prefabName": "TaskCompletion",
+                        "position": [
+                            10.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": 0.0,
+                        "scale": 1.0,
+                        "layerIndex": 4
+                    }
+                ],
+                "e01aedeb3e7442488e6aabfa4b254e92": [
+                    {
+                        "prefabName": "fall_leaf_script",
+                        "position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": 15.0,
+                        "scale": 1.0,
+                        "layerIndex": 4
+                    },
+                    {
+                        "prefabName": "TaskCompletion",
+                        "position": [
+                            5.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": 0.0,
+                        "scale": 1.0,
+                        "layerIndex": 4
+                    }
+                ]
+            }
+        },
+        {
+            "description": "Task 2 Description",
+            "scriptables": {
+                "1303cb61dd594f5dad4fe53bac53eca5": [
+                    {
+                        "prefabName": "fall_leaf_script",
+                        "position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": 15.0,
+                        "scale": 1.0,
+                        "layerIndex": 4
+                    },
+                    {
+                        "prefabName": "TaskCompletion",
+                        "position": [
+                            15.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": 0.0,
+                        "scale": 1.0,
+                        "layerIndex": 4
+                    }
+                ],
+                "e01aedeb3e7442488e6aabfa4b254e92": [
+                    {
+                        "prefabName": "fall_leaf_script",
+                        "position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": 15.0,
+                        "scale": 1.0,
+                        "layerIndex": 4
+                    },
+                    {
+                        "prefabName": "TaskCompletion",
+                        "position": [
+                            15.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": 0.0,
+                        "scale": 1.0,
+                        "layerIndex": 4
+                    }
+                ]
+            }
+        }
+    ],
+    "RewardInfo": {},
+    "description": "Quest Description"
+}
