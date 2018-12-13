@@ -12,7 +12,7 @@ public class WorldGenerator : MonoBehaviour
     public GameObject _layer;
     public GameObject _portal;
     public GameObject _sprite;
-    public GameObject cam;
+    public GameObject player;
     public GameObject title;
     public GameObject transition;
     public string world_id;
@@ -115,25 +115,27 @@ public class WorldGenerator : MonoBehaviour
             mesh.RecalculateBounds();
             meshFilter = layer.GetComponent<MeshFilter>();
             meshFilter.mesh = mesh;
-            polygonCollider = layer.GetComponent<PolygonCollider2D>();
-            List<Vector2> vert2 = new List<Vector2>();
-            foreach (Vector3 vert in vertices)
-            {
-                vert2.Add(new Vector2(vert.x, vert.y));
-            }
             if (j == 4)
+            {
+                polygonCollider = layer.GetComponent<PolygonCollider2D>();
+                List<Vector2> vert2 = new List<Vector2>();
+                foreach (Vector3 vert in vertices)
+                {
+                    vert2.Add(new Vector2(vert.x, vert.y - 1.0f));
+                }
                 polygonCollider.points = vert2.ToArray();
+            }
             meshRenderer = layer.GetComponent<MeshRenderer>();
             meshRenderer.material.SetColor("_Color", new Color(l.color[0] / 255.0f, l.color[1] / 255.0f, l.color[2] / 255.0f));
             layer.name = "Layer" + j;
-            layer.layer = LayerMask.NameToLayer(layer.name);
+            layer.layer = LayerMask.NameToLayer(layer.name.ToLower());
             layer.transform.position = new Vector3(-(16.0f / 9.0f) * 5.0f, 0.0f, world.layers.Count - j);
             objectLayer = layer.GetComponent<WorldData.Layer>();
             objectLayer.Copy(l);
         }
 
         layer = GameObject.Find("Layer4");
-        cam.GetComponent<Movement>().worldSize = layer.GetComponent<MeshRenderer>().bounds.size.x;
+        player.GetComponent<Rigidbody2D>().isKinematic = false;
 
         foreach (Portal p in world.layers[4].portals)
         {
@@ -144,11 +146,12 @@ public class WorldGenerator : MonoBehaviour
             portal.name = p.name;
             portal.link = p.link;
             portal.title = title;
+            portalObj.layer = layer.layer;
             portalObj.transform.position = new Vector3(world.layers[4].Ratio * (p.x / 10.0f - 5.0f), (100 - p.y) / 10.0f - 5.0f, 0.0f);
             portalObj.transform.parent = layer.transform;
         }
         this.world = world;
-        Movement movement = cam.GetComponent<Movement>();
+        Movement movement = player.GetComponent<Movement>();
         movement.SetPlayerPosition();
         if (sprite_ids.Count > 0)
         {
@@ -175,11 +178,11 @@ public class WorldGenerator : MonoBehaviour
     private IEnumerator SetInitialPosition(WWW req)
     {
         yield return req;
-        float x = JsonConvert.DeserializeObject<float>(req.text);
-        Movement movement = cam.GetComponent<Movement>();
+        Vector2 pos = JsonConvert.DeserializeObject<Vector2>(req.text);
+        Movement movement = player.GetComponent<Movement>();
         WorldData.Layer layer = GameObject.Find("Layer4").GetComponent<WorldData.Layer>();
-        movement.pos = 100 * (x - 50.0f) / (layer.size - 100.0f);
-        movement.UpdateLayers();
+        pos = new Vector2(world.layers[4].Ratio * (pos.x / 10.0f - 5.0f), (100 - pos.y) / 10.0f - 5.0f);
+        movement.SetPlayerPosition(pos);
     }
 
     private void AddSpriteObjectsToWorld(Dictionary<string, Tuple<string, bool, string>> sources)
@@ -224,6 +227,7 @@ public class WorldGenerator : MonoBehaviour
         worldSprite.transform.position = pos;
         worldSprite.transform.localScale *= scale;
         worldSprite.transform.rotation = rotation;
+        worldSprite.layer = worldLayer.layer;
     }
 
     private void InstantiateScriptable(WorldData.Sprite s, GameObject worldLayer, WorldData.Layer layer, int i)
@@ -233,10 +237,20 @@ public class WorldGenerator : MonoBehaviour
         Quaternion rotation = Quaternion.Euler(0.0f, 0.0f, -s.rotation);
         string pathname = "Scriptables/" + sprites[s.id].name;
         GameObject scriptable = (GameObject)Instantiate((GameObject)Resources.Load(pathname));
+        UpdateLayer(scriptable, LayerMask.NameToLayer(worldLayer.name.ToLower()));
         scriptable.transform.parent = worldLayer.transform;
         scriptable.transform.position = pos;
         scriptable.transform.localScale *= scale;
         scriptable.transform.rotation = rotation;
+    }
+
+    private void UpdateLayer(GameObject obj, int layer)
+    {
+        obj.layer = layer;
+        for (int i = 0; i < obj.transform.childCount; i++)
+        {
+            UpdateLayer(obj.transform.GetChild(i).gameObject, layer);
+        }
     }
 
     private void AddSprite(KeyValuePair<string, Tuple<string, bool, string>> kvp)

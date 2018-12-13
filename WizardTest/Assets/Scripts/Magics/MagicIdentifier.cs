@@ -61,7 +61,7 @@ namespace MachineLearning
         {
             List<double> input;
             double max = 0;
-            double[] op = new double[5];
+            double[] op = new double[4];
             int index = 0;
             for (int i = 0; i < magics.Count; i++)
             {
@@ -76,6 +76,10 @@ namespace MachineLearning
                     max = output[0];
                     index = i;
                 }
+            }
+            foreach (double o in op)
+            {
+                Debug.Log(o);
             }
             return (max > tolerance) ? index : -1;
         }

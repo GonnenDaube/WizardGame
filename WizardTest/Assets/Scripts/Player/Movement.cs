@@ -5,48 +5,98 @@ using WorldData;
 
 public class Movement : MonoBehaviour
 {
-    public float velocity;
-    public float dir;
-    public float pos;
-    public float worldSize;
-    public GameObject player;
-    public float jmpForce;
-    private float jmpVelocity;
-    private bool left;
-    private bool right;
-    private bool sprint;
-    private bool jmp;
-    private bool fall;
-    private bool inAir;
-    private const float ratio = (16.0f / 9.0f);
-    private GameObject layer;
-    private Animator animator;
-    private Vector3 target;
-    private Rigidbody2D rb;
+    [SerializeField]
+    private float velocity;
+    [SerializeField]
+    private float jumpForce;
 
+    private Animator animator;
+    private Rigidbody2D rbody;
+
+    [SerializeField]
+    private bool walk;
+    private bool right;
+    private bool left;
+    private bool sprint;
+    private bool jump;
+    private bool fall;
+    private int dir;
+    private Vector2 pos;
+    private float momentum;
+
+    private List<GameObject> layers;
+    private List<float> sizes;
+    private Transform cam;
+
+    private const float ratio = 16.0f / 9.0f;
+
+    // Use this for initialization
     void Start()
     {
+        animator = GetComponent<Animator>();
+        rbody = GetComponent<Rigidbody2D>();
+        cam = Camera.main.transform;
+        momentum = 0.0f;
         dir = 0;
-        right = left = false;
-        jmp = false;
-        fall = false;
-        animator = player.GetComponent<Animator>();
-        rb = player.GetComponent<Rigidbody2D>();
+        walk = false;
+        sizes = new List<float>();
+        layers = new List<GameObject>();
     }
 
     public void SetPlayerPosition()
     {
-        GameObject layerObject = GameObject.Find("Layer4");
-        float pos = CalcCurrentPosition(layerObject);
-        float y = FindHeightPerPosition(pos, layerObject);
-        target = new Vector3(0.0f, y, 1.5f);
-        player.transform.position = new Vector3(0.0f, y, 1.5f);
+        SetPlayerPosition(new Vector2(0.0f, 0.0f));
     }
 
+    public void SetPlayerPosition(Vector2 pos)
+    {
+        layers.Clear();
+        for (int i = 0; i < 6; i++)
+        {
+            layers.Add(GameObject.Find("Layer" + i));
+            sizes.Add(layers[i].GetComponent<MeshRenderer>().bounds.size.x);
+        }
+        transform.position = new Vector3(pos.x, pos.y, 1.5f);
+        UpdateCamera();
+    }
+
+    // Update is called once per frame
     void Update()
     {
         UpdateInput();
         Move();
+    }
+
+    private void UpdateCamera()
+    {
+        if (transform.position.x < sizes[4] - ratio * 10.0f && transform.position.x > 0.0f)
+        {
+            cam.Translate(transform.position.x - cam.position.x, 0.0f, 0.0f);
+            UpdateLayers();
+        }
+    }
+
+    private void UpdateLayers()
+    {
+        float per = CalcPercentage();
+        for (int i = 0; i < 6; i++)
+        {
+            if (i != 4)//no need to translate layer 4, calculation would translate by zero
+            {
+                layers[i].transform.Translate(CalcLayerPosition(per, sizes[i]) - layers[i].transform.position.x, 0.0f, 0.0f);
+            }
+        }
+    }
+
+    private float CalcPercentage()
+    {
+        return (cam.position.x) / (sizes[4] - 10.0f * ratio);
+    }
+
+    private float CalcLayerPosition(float per, float size)
+    {
+        float offset = per * (size - 10.0f * ratio) + 5.0f * ratio;
+        return cam.transform.position.x - offset;
     }
 
     private void UpdateInput()
@@ -75,9 +125,9 @@ public class Movement : MonoBehaviour
             sprint = false;
 
         if (Input.GetKeyDown(KeyCode.W))
-            jmp = true;
+            jump = true;
         if (Input.GetKeyUp(KeyCode.W))
-            jmp = false;
+            jump = false;
 
         //calc direction from input
         if (left && right)
@@ -89,13 +139,13 @@ public class Movement : MonoBehaviour
         {
             dir = -1;
             animator.SetBool("IsRun", true);
-            player.transform.localScale = new Vector3(-0.2f, 0.2f, 1.0f);
+            transform.localScale = new Vector3(-0.2f, 0.2f, 1.0f);
         }
         else if (right)
         {
             dir = 1;
             animator.SetBool("IsRun", true);
-            player.transform.localScale = new Vector3(0.2f, 0.2f, 1.0f);
+            transform.localScale = new Vector3(0.2f, 0.2f, 1.0f);
         }
         else
         {
@@ -103,31 +153,21 @@ public class Movement : MonoBehaviour
             animator.SetBool("IsRun", false);
         }
 
-        //Fall
-        if (player.transform.position.y > target.y)
-            inAir = true;
-
-        //Jump
-        if (inAir && player.transform.position.y < target.y)
+        if (walk && jump)
         {
-            animator.SetBool("IsJump", false);
-            inAir = false;
-            rb.velocity = Vector2.zero;
-        }
-        if (jmp && !inAir)
-        {
-            rb.velocity += (Vector2.up * jmpForce);
+            rbody.isKinematic = false;
+            rbody.velocity += Vector2.up * jumpForce;
             animator.SetBool("IsFall", false);
             animator.SetBool("IsJump", true);
-            inAir = true;
+            walk = false;
         }
-        if (inAir && rb.velocity.y < 0.0f)
+        if (rbody.velocity.y < 0.0f)
         {
             fall = true;
             animator.SetBool("IsJump", false);
             animator.SetBool("IsFall", true);
         }
-        if (!inAir && fall)
+        if (walk && fall)
         {
             fall = false;
             animator.SetBool("IsFall", false);
@@ -136,89 +176,67 @@ public class Movement : MonoBehaviour
 
     private void Move()
     {
-        float step;
-        if (dir != 0)
+        if (walk)
         {
-            step = dir * velocity * Time.deltaTime * 100.0f / Mathf.Pow(worldSize, 1.5f);
-            step *= sprint ? 2 : 1;
-            pos += step;
-            pos = Mathf.Clamp(pos, 0.0f, 100.0f);
-            UpdateLayers();
-            UpdatePlayerPosition();
-        }
-        if (inAir)
-        {
-            if (Mathf.Abs(rb.velocity.x) > 0.0f)
+            if (dir != 0)
             {
-                step = 10.0f * rb.velocity.x * Time.deltaTime * 100.0f / Mathf.Pow(worldSize, 1.5f);
-                player.transform.position = new Vector3(0.0f, player.transform.position.y, player.transform.position.z);
-                pos += step;
-                pos = Mathf.Clamp(pos, 0.0f, 100.0f);
-                UpdateLayers();
-                UpdatePlayerPosition();
+                Vector2 vel = Vector2.right * dir * velocity;
+                if (sprint)
+                    vel *= 2;
+                pos += vel * Time.deltaTime;
+                RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.down, 1.2f, (1 << LayerMask.NameToLayer("layer4")));
+                if (hit.collider != null && hit.collider.name.Contains("Layer"))
+                {
+                    pos += Vector2.down * (hit.distance - 1.0f);
+                }
+                rbody.MovePosition(pos);
             }
         }
         else
         {
-            step = velocity / 100.0f * Time.deltaTime;
-            step *= sprint ? 2 : 1;
-            player.transform.position = Vector3.MoveTowards(player.transform.position, target, step);
+            rbody.velocity = rbody.velocity * Vector2.up + Vector2.right * dir * velocity * (sprint ? 2 : 1) + Vector2.right * momentum;
+        }
+
+        if (dir != 0 || momentum != 0.0f)
+            UpdateCamera();
+    }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.name.Contains("Layer"))
+        {
+            walk = true;
+            rbody.isKinematic = true;
+            pos = new Vector2(transform.position.x, transform.position.y);
+            momentum = 0.0f;
+            rbody.velocity = Vector2.zero;
         }
     }
 
-    public void UpdateLayers()
+    private void OnCollisionExit2D(Collision2D other)
     {
-        GameObject layerObject;
-        for (int i = 0; i < 6; i++)
+        if (other.gameObject.name.Contains("Layer"))
         {
-            layerObject = GameObject.Find("Layer" + i);
-            layerObject.transform.position = new Vector3(-CalcCurrentPosition(layerObject), 0.0f, 6.0f - i);
+            walk = false;
+            rbody.isKinematic = false;
         }
     }
 
-    private void UpdatePlayerPosition()
+    public void Push(Vector2 vel)
     {
-        GameObject layerObject = GameObject.Find("Layer4");
-        float pos = CalcCurrentPosition(layerObject);
-        float y = FindHeightPerPosition(pos, layerObject);
-        target = new Vector3(0.0f, y, 1.5f);
-    }
-
-    private float CalcCurrentPosition(GameObject layerObject)
-    {
-        Layer layer = layerObject.GetComponent<Layer>();
-        float size = ratio * layer.size / 10.0f;
-        float offset = (size - ratio * 10.0f) * pos / 100;
-        return ratio * 5.0f + offset;
-    }
-
-    private float FindHeightPerPosition(float pos, GameObject layerObject)
-    {
-        Mesh mesh = layerObject.GetComponent<MeshFilter>().mesh;
-        Vector3[] vertices = mesh.vertices;
-        int bot = 0, top = vertices.Length - 1, mid = (bot + top) / 2;
-        bool found = false;
-        float height;
-        float distance;
-        float weight;
-        while (!found && top > bot)
+        if (walk)
         {
-            mid = (bot + top) / 2;
-            if (vertices[mid].x == pos)
-                found = true;
-            else if (vertices[mid].x < pos)
-                bot = mid + 1;
-            else
-                top = mid - 1;
-        }
-        if (!found)
-        {
-            distance = vertices[mid + 1].x - vertices[mid].x;
-            weight = (pos - vertices[mid].x) / distance;
-            height = weight * vertices[mid].y + (1 - weight) * vertices[mid + 1].y;
+            if (vel.y > 0.0f)
+            {
+                rbody.isKinematic = false;
+                walk = false;
+                rbody.velocity = vel.y * Vector2.up;
+                momentum = vel.x;
+            }
         }
         else
-            height = vertices[mid].y;
-        return height;
+        {
+            rbody.velocity += vel;
+        }
     }
 }

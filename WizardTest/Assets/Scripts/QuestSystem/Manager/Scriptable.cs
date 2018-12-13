@@ -15,6 +15,16 @@ public class Scriptable : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, 0, info.rotation);
         transform.localScale *= info.scale;
         transform.parent = layer.transform;
+        UpdateLayer(this.gameObject, layer.layer);
+    }
+
+    private void UpdateLayer(GameObject obj, int layer)
+    {
+        obj.layer = layer;
+        for (int i = 0; i < obj.transform.childCount; i++)
+        {
+            UpdateLayer(obj.transform.GetChild(i).gameObject, layer);
+        }
     }
 
     public void OnTaskComplete()

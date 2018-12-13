@@ -152,6 +152,65 @@ Prefab:
       propertyPath: m_RootOrder
       value: 9
       objectReference: {fileID: 0}
+    - target: {fileID: 50956511783247624, guid: ed88db97eb27ff64ca966ea45c1289a9,
+        type: 2}
+      propertyPath: m_Constraints
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 50956511783247624, guid: ed88db97eb27ff64ca966ea45c1289a9,
+        type: 2}
+      propertyPath: m_UseFullKinematicContacts
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 50956511783247624, guid: ed88db97eb27ff64ca966ea45c1289a9,
+        type: 2}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: 4938d7a4dc1370d45abc282569d7ab15, type: 2}
+    - target: {fileID: 50956511783247624, guid: ed88db97eb27ff64ca966ea45c1289a9,
+        type: 2}
+      propertyPath: m_BodyType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 50956511783247624, guid: ed88db97eb27ff64ca966ea45c1289a9,
+        type: 2}
+      propertyPath: m_Mass
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 50956511783247624, guid: ed88db97eb27ff64ca966ea45c1289a9,
+        type: 2}
+      propertyPath: m_LinearDrag
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 1594328227595286, guid: ed88db97eb27ff64ca966ea45c1289a9, type: 2}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 1969686696486862, guid: ed88db97eb27ff64ca966ea45c1289a9, type: 2}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 1514962511704322, guid: ed88db97eb27ff64ca966ea45c1289a9, type: 2}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 1603147019306200, guid: ed88db97eb27ff64ca966ea45c1289a9, type: 2}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 1781593299541862, guid: ed88db97eb27ff64ca966ea45c1289a9, type: 2}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 1368853410056912, guid: ed88db97eb27ff64ca966ea45c1289a9, type: 2}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 50956511783247624, guid: ed88db97eb27ff64ca966ea45c1289a9,
+        type: 2}
+      propertyPath: m_CollisionDetection
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 61303769689950400, guid: ed88db97eb27ff64ca966ea45c1289a9, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: ed88db97eb27ff64ca966ea45c1289a9, type: 2}
@@ -166,7 +225,6 @@ GameObject:
   - component: {fileID: 519420032}
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
-  - component: {fileID: 519420030}
   m_Layer: 0
   m_Name: Camera
   m_TagString: MainCamera
@@ -181,23 +239,6 @@ AudioListener:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_Enabled: 1
---- !u!114 &519420030
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60c35b52ce95688489a001ed5535ca55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  velocity: 100
-  dir: 0
-  pos: 0
-  worldSize: 0
-  player: {fileID: 1452204876}
-  jmpForce: 7.5
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -821,7 +862,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   request: {fileID: 1887386434}
-  network_id: d0ac70a3f6854d59bf6366b9752c45f0
+  network_id: a72dfe84aa2844d188ea9869ba7c1ba6
   tolerance: 0.5
 --- !u!4 &1121344452
 Transform:
@@ -955,7 +996,7 @@ MonoBehaviour:
   _layer: {fileID: 1626504134697680, guid: cdfa96fdc1f761a4ab2a12ac61753cab, type: 2}
   _portal: {fileID: 1011112021103920, guid: 5de8b10d5afeba445a02e98a60556652, type: 2}
   _sprite: {fileID: 1730377768897898, guid: cef46c015a7702f409585899d06b0005, type: 2}
-  cam: {fileID: 519420028}
+  player: {fileID: 1452204876}
   title: {fileID: 987506353}
   transition: {fileID: 1209418127}
   world_id: 1303cb61dd594f5dad4fe53bac53eca5
@@ -1116,6 +1157,20 @@ CapsuleCollider2D:
   m_Offset: {x: -0.25, y: -0.5}
   m_Size: {x: 5, y: 10}
   m_Direction: 0
+--- !u!114 &1452204881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1452204876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627bd191eb3da9943b12c06f262a8428, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocity: 3
+  jumpForce: 7.5
+  walk: 0
 --- !u!4 &1866000678 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4614018797124686, guid: 230f5c5ed3bbf3a49bacb669f2f62d51,

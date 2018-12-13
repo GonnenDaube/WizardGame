@@ -9,6 +9,7 @@ public class fluctus : MagicAction
     void Start()
     {
         Debug.Log("fluctus");
+        Destroy(this.gameObject);
     }
 
     // Update is called once per frame
@@ -22,7 +23,7 @@ public class fluctus : MagicAction
         return false;
     }
 
-    public override void SetMouseTrail(List<Vector3> pos, Vector3 rawStart)
+    public override void SetMouseTrail(List<Vector3> pos)
     {
         Debug.Log("Proccessing");
     }

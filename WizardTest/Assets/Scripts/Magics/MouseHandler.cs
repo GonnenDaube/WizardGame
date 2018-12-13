@@ -16,7 +16,6 @@ public class MouseHandler : MonoBehaviour
     [SerializeField]
     private GameObject[] magics;
     private List<Vector3> pos;
-    private Vector3 rawStart;
     private bool record;
     private MagicAction magic;
 
@@ -34,7 +33,6 @@ public class MouseHandler : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             record = true;
-            rawStart = Input.mousePosition;
             pos = new List<Vector3>();
             pos.Add(cur);
         }
@@ -43,7 +41,7 @@ public class MouseHandler : MonoBehaviour
             record = false;
             if (magic != null && magic.RequiresMouseTrail())
             {
-                magic.SetMouseTrail(pos, rawStart);
+                magic.SetMouseTrail(pos);
                 magic = null;
             }
             else
@@ -58,12 +56,13 @@ public class MouseHandler : MonoBehaviour
             UpdateTrail(cur);
         }
 
-        transform.position = cur;
+        transform.position = cur + Vector3.ProjectOnPlane(cam.transform.position, Vector3.forward);
     }
 
     private Vector3 GetMousePos()
     {
         Vector3 cur = cam.ScreenToWorldPoint(Input.mousePosition);
+        cur -= cam.transform.position;
         cur.z = -5.0f;
         return cur;
     }
@@ -71,7 +70,7 @@ public class MouseHandler : MonoBehaviour
     private void UpdateTrail(Vector3 cur)
     {
         GameObject particle = (GameObject)Instantiate(effect);
-        particle.transform.position = cur;
+        particle.transform.position = cur + Vector3.ProjectOnPlane(cam.transform.position, Vector3.forward);
         Destroy(particle, 1.0f);
     }
 

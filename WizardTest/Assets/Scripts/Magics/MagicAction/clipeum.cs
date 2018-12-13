@@ -9,6 +9,7 @@ public class clipeum : MagicAction
     void Start()
     {
         Debug.Log("clipeum");
+        Destroy(this.gameObject);
     }
 
     // Update is called once per frame
@@ -22,7 +23,7 @@ public class clipeum : MagicAction
         return false;
     }
 
-    public override void SetMouseTrail(List<Vector3> pos, Vector3 rawStart)
+    public override void SetMouseTrail(List<Vector3> pos)
     {
 
     }

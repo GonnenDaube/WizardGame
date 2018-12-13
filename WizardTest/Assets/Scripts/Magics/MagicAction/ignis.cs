@@ -9,6 +9,7 @@ public class ignis : MagicAction
     void Start()
     {
         Debug.Log("ignis");
+        Destroy(this.gameObject);
     }
 
     // Update is called once per frame
@@ -22,7 +23,7 @@ public class ignis : MagicAction
         return false;
     }
 
-    public override void SetMouseTrail(List<Vector3> pos, Vector3 rawStart)
+    public override void SetMouseTrail(List<Vector3> pos)
     {
         Debug.Log("Proccessing");
     }
