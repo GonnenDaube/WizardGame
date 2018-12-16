@@ -27,7 +27,10 @@ public class PortalManager : MonoBehaviour
     {
         yield return new WaitForSeconds(0.25f);
         WorldGenerator generator = worldGenerator.GetComponent<WorldGenerator>();
-        generator.world_id = world_target;
-        generator.RegenerateWorld(portal_target);
+        if (!generator.IsRegenerating())
+        {
+            generator.world_id = world_target;
+            generator.RegenerateWorld(portal_target);
+        }
     }
 }

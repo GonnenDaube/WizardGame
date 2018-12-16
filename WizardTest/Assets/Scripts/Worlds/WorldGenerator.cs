@@ -18,6 +18,7 @@ public class WorldGenerator : MonoBehaviour
     public string world_id;
     private WorldData.World world;
     private string start_portal;
+    private bool regenerating;
 
     private Dictionary<string, SpriteLoadData> sprites;
     private BinaryFormatter formatter;
@@ -38,15 +39,19 @@ public class WorldGenerator : MonoBehaviour
 
     public void RegenerateWorld(string start_portal)
     {
-        GameObject layer;
-        for (int i = 0; i < 6; i++)
+        if (!regenerating)
         {
-            layer = GameObject.Find("Layer" + i);
-            if (layer != null)
-                GameObject.Destroy(layer);
+            regenerating = true;
+            GameObject layer;
+            for (int i = 0; i < 6; i++)
+            {
+                layer = GameObject.Find("Layer" + i);
+                if (layer != null)
+                    GameObject.Destroy(layer);
+            }
+            this.start_portal = start_portal;
+            request.Request("WorldBuilder/_GetWorld?id=" + world_id, BuildWorld);
         }
-        this.start_portal = start_portal;
-        request.Request("WorldBuilder/_GetWorld?id=" + world_id, BuildWorld);
     }
 
     private IEnumerator BuildWorld(WWW req)
@@ -212,6 +217,7 @@ public class WorldGenerator : MonoBehaviour
         if (GameObject.FindWithTag("Task") != null)
             GameObject.FindWithTag("Task").GetComponent<Task>().ReloadScriptables();
         transition.GetComponent<Animator>().SetBool("isTraveling", false);
+        regenerating = false;
     }
 
     private void InstantiateSprite(WorldData.Sprite s, GameObject worldLayer, WorldData.Layer layer, int i)
@@ -277,5 +283,10 @@ public class WorldGenerator : MonoBehaviour
         Rect rect = new Rect(0, 0, texture.width, texture.height);
         Sprite sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f), texture.width);
         sprites.Add(id, new SpriteLoadData(sprite, data.scriptable, data.name));
+    }
+
+    public bool IsRegenerating()
+    {
+        return regenerating;
     }
 }
